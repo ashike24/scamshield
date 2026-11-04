@@ -35,6 +35,8 @@ If nothing is risky, return an empty flagged_sentences list and a low score."""
 
 
 def _parse_json(text):
+    if not text:
+        raise ValueError("Sarvam returned no content - the reply may have been cut off")
     if "</think>" in text:
         text = text.split("</think>")[-1]
     start = text.find("{")
@@ -58,7 +60,7 @@ def analyze(transcript, language_code=None):
                 {"role": "user", "content": user_msg},
             ],
             "temperature": 0.2,
-            "reasoning_effort": "low",
+            "reasoning_effort": None, "max_tokens": 3000,
         },
         timeout=120,
     )
@@ -71,3 +73,4 @@ def analyze(transcript, language_code=None):
     result.setdefault("flagged_sentences", [])
     result.setdefault("summary", "")
     return result
+
